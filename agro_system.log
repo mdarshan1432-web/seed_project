@@ -1,0 +1,100 @@
+2026-09-28 22:39:22,812 | INFO    | agro | ========================================================================
+2026-09-28 22:39:22,812 | INFO    | agro | Booting Real-Time Agriculture Seeds Detection backend
+2026-09-28 22:39:22,812 | INFO    | agro | ========================================================================
+2026-09-28 22:39:22,814 | INFO    | agro | Loaded 54 classes from classes.txt
+2026-09-28 22:39:22,816 | DEBUG   | h5py._conv | Creating converter from 3 to 5
+2026-09-28 22:39:23,124 | INFO    | agro | Recovered model from model1.h5 by sanitizing model_config
+2026-09-28 22:39:23,124 | INFO    | agro | Loaded CNN model: model1.h5  input=(224, 224)  outputs=54
+2026-09-28 22:39:23,127 | ERROR   | agro | Failed to load model2.h5 : Unable to synchronously open file (bad superblock version number)
+2026-09-28 22:39:23,250 | ERROR   | agro | Failed to load model3.h5 : Unrecognized keyword arguments: ['batch_shape']
+2026-09-28 22:39:23,289 | INFO    | agro | YOLO model classes (54): ['Almond', 'Amla', 'Apple', 'Avocado', 'Betel_Nut', 'Bitter_melon', 'Black_Plum', 'Bottle_gourd_long', 'Carrot', 'Cashew']
+2026-09-28 22:39:23,290 | INFO    | agro | YOLO model has 54/54 seed classes
+2026-09-28 22:39:23,290 | DEBUG   | agro | YOLO names mapping: {0: 'Almond', 1: 'Amla', 2: 'Apple', 3: 'Avocado', 4: 'Betel_Nut', 5: 'Bitter_melon', 6: 'Black_Plum', 7: 'Bottle_gourd_long', 8: 'Carrot', 9: 'Cashew', 10: 'Cauliflower', 11: 'Chilli', 12: 'Chinese_Date', 13: 'Coriander_leaves', 14: 'Date', 15: 'Guava', 16: 'Hog_Plum', 17: 'Hyacinth_bean', 18: 'Jackfruit', 19: 'Litchi', 20: 'Malabar_Spinach', 21: 'Mango', 22: 'Okra', 23: 'Olive', 24: 'Onion', 25: 'Orange', 26: 'Palm', 27: 'Papaya', 28: 'Pea', 29: 'Pumpkin', 30: 'Radish', 31: 'Ribbed_gourd', 32: 'Sapodilla', 33: 'Spinach', 34: 'Tamarind', 35: 'Tomato', 36: 'Water_spinach', 37: 'ash_gourd', 38: 'bitter_gourd', 39: 'chilli_green_long', 40: 'cluster_beans', 41: 'corn', 42: 'cucumber', 43: 'cucumber_green_long', 44: 'dill_leaves', 45: 'ladys_finger', 46: 'palak', 47: 'pole_beans', 48: 'ridge_gourd_long', 49: 'snake_gourd', 50: 'snake_gourd_green_long', 51: 'sponge_gourd', 52: 'string_bean', 53: 'wax_gourd'}
+2026-09-28 22:39:23,290 | INFO    | agro | Loaded YOLO model: yolov8n_seeds.pt
+2026-09-28 22:39:23,293 | INFO    | agro | Starting Flask dev server at http://127.0.0.1:5000
+2026-09-28 22:39:23,294 | INFO    | agro | CNN ensemble : 1 model(s)
+2026-09-28 22:39:23,294 | INFO    | agro | YOLO         : loaded
+2026-09-28 22:39:23,294 | INFO    | agro | Classes      : 54
+2026-09-28 22:39:23,312 | INFO    | werkzeug | [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.20.153.187:5000
+2026-09-28 22:39:23,312 | INFO    | werkzeug | [33mPress CTRL+C to quit[0m
+2026-09-28 22:39:23,805 | INFO    | werkzeug | 127.0.0.1 - - [28/Sep/2026 22:39:23] "GET /api/health HTTP/1.1" 200 -
+2026-09-28 22:39:24,055 | INFO    | werkzeug | 127.0.0.1 - - [28/Sep/2026 22:39:24] "GET / HTTP/1.1" 200 -
+2026-09-28 22:39:24,394 | INFO    | werkzeug | 127.0.0.1 - - [28/Sep/2026 22:39:24] "GET /static/script.js HTTP/1.1" 200 -
+2026-09-28 22:39:24,395 | INFO    | werkzeug | 127.0.0.1 - - [28/Sep/2026 22:39:24] "GET /static/style.css HTTP/1.1" 200 -
+2026-09-28 22:39:24,421 | INFO    | werkzeug | 127.0.0.1 - - [28/Sep/2026 22:39:24] "GET /api/health HTTP/1.1" 200 -
+2026-09-28 22:39:38,952 | DEBUG   | PIL.TiffImagePlugin | tag: Artist (315) - type: string (2) Tag Location: 22 - Data Location: 134 - value: b'yiap sf\x00'
+2026-09-28 22:39:38,952 | DEBUG   | PIL.TiffImagePlugin | tag: ImageWidth (256) - type: long (4) - value: b'\x00\x00\x03b'
+2026-09-28 22:39:38,952 | DEBUG   | PIL.TiffImagePlugin | tag: Model (272) - type: string (2) Tag Location: 46 - Data Location: 142 - value: b'Canon EOS 400D DIGITAL\x00'
+2026-09-28 22:39:38,952 | DEBUG   | PIL.TiffImagePlugin | tag: ImageLength (257) - type: long (4) - value: b'\x00\x00\x05\x14'
+2026-09-28 22:39:38,952 | DEBUG   | PIL.TiffImagePlugin | tag: Make (271) - type: string (2) Tag Location: 70 - Data Location: 165 - value: b'Canon\x00'
+2026-09-28 22:39:38,952 | DEBUG   | PIL.TiffImagePlugin | tag: Software (305) - type: string (2) Tag Location: 82 - Data Location: 171 - value: b'Adobe Photoshop CS3 Windows\x00'
+2026-09-28 22:39:38,952 | DEBUG   | PIL.TiffImagePlugin | tag: ImageDescription (270) - type: string (2) Tag Location: 94 - Data Location: 199 - value: b'Apple Seeds On White Background\x00'
+2026-09-28 22:39:38,953 | DEBUG   | PIL.TiffImagePlugin | tag: ExifIFD (34665) - type: long (4) - value: b'\x00\x00\x00\xfb'
+2026-09-28 22:39:38,953 | DEBUG   | PIL.TiffImagePlugin | tag: Orientation (274) - type: short (3) - value: b'\x00\x00'
+2026-09-28 22:39:38,953 | DEBUG   | PIL.TiffImagePlugin | tag: DateTime (306) - type: string (2) Tag Location: 130 - Data Location: 231 - value: b'2021:07:26 14:44:53\x00'
+2026-09-28 22:39:38,953 | DEBUG   | PIL.TiffImagePlugin | tag: Artist (315) - type: string (2) Tag Location: 22 - Data Location: 134 - value: b'yiap sf\x00'
+2026-09-28 22:39:38,954 | DEBUG   | PIL.TiffImagePlugin | tag: ImageWidth (256) - type: long (4) - value: b'\x00\x00\x03b'
+2026-09-28 22:39:38,954 | DEBUG   | PIL.TiffImagePlugin | tag: Model (272) - type: string (2) Tag Location: 46 - Data Location: 142 - value: b'Canon EOS 400D DIGITAL\x00'
+2026-09-28 22:39:38,954 | DEBUG   | PIL.TiffImagePlugin | tag: ImageLength (257) - type: long (4) - value: b'\x00\x00\x05\x14'
+2026-09-28 22:39:38,954 | DEBUG   | PIL.TiffImagePlugin | tag: Make (271) - type: string (2) Tag Location: 70 - Data Location: 165 - value: b'Canon\x00'
+2026-09-28 22:39:38,954 | DEBUG   | PIL.TiffImagePlugin | tag: Software (305) - type: string (2) Tag Location: 82 - Data Location: 171 - value: b'Adobe Photoshop CS3 Windows\x00'
+2026-09-28 22:39:38,954 | DEBUG   | PIL.TiffImagePlugin | tag: ImageDescription (270) - type: string (2) Tag Location: 94 - Data Location: 199 - value: b'Apple Seeds On White Background\x00'
+2026-09-28 22:39:38,954 | DEBUG   | PIL.TiffImagePlugin | tag: ExifIFD (34665) - type: long (4) - value: b'\x00\x00\x00\xfb'
+2026-09-28 22:39:38,954 | DEBUG   | PIL.TiffImagePlugin | tag: Orientation (274) - type: short (3) - value: b'\x00\x00'
+2026-09-28 22:39:38,955 | DEBUG   | PIL.TiffImagePlugin | tag: DateTime (306) - type: string (2) Tag Location: 130 - Data Location: 231 - value: b'2021:07:26 14:44:53\x00'
+2026-09-28 22:39:38,955 | DEBUG   | agro | Upload saved: C:\Users\mdars\OneDrive\Desktop\seed_project\static\uploads\1790615378_3afa1028_Apple_5.jpg  size=(866, 1300)
+2026-09-28 22:39:38,955 | DEBUG   | agro | Predict endpoint: calling pipeline with filename=1790615378_3afa1028_Apple_5.jpg  force_online=False
+2026-09-28 22:39:38,955 | DEBUG   | agro | Loaded models summary: CNN=['C:\\Users\\mdars\\OneDrive\\Desktop\\seed_project\\model1.h5']  YOLO=C:\Users\mdars\OneDrive\Desktop\seed_project\yolov8n_seeds.pt
+2026-09-28 22:39:39,022 | DEBUG   | agro | Standardized upload frame from 866x1300 to 600x900 (scale: 0.69)
+2026-09-28 22:39:39,022 | DEBUG   | agro | Frame standardized: (600, 900) from upload (66.8ms)
+2026-09-28 22:39:39,022 | DEBUG   | agro | YOLO predict called: path=C:\Users\mdars\OneDrive\Desktop\seed_project\yolov8n_seeds.pt  conf=0.180  img_size=(600, 900)
+2026-09-28 22:39:39,022 | DEBUG   | agro | YOLO model names: {0: 'Almond', 1: 'Amla', 2: 'Apple', 3: 'Avocado', 4: 'Betel_Nut', 5: 'Bitter_melon', 6: 'Black_Plum', 7: 'Bottle_gourd_long', 8: 'Carrot', 9: 'Cashew', 10: 'Cauliflower', 11: 'Chilli', 12: 'Chinese_Date', 13: 'Coriander_leaves', 14: 'Date', 15: 'Guava', 16: 'Hog_Plum', 17: 'Hyacinth_bean', 18: 'Jackfruit', 19: 'Litchi', 20: 'Malabar_Spinach', 21: 'Mango', 22: 'Okra', 23: 'Olive', 24: 'Onion', 25: 'Orange', 26: 'Palm', 27: 'Papaya', 28: 'Pea', 29: 'Pumpkin', 30: 'Radish', 31: 'Ribbed_gourd', 32: 'Sapodilla', 33: 'Spinach', 34: 'Tamarind', 35: 'Tomato', 36: 'Water_spinach', 37: 'ash_gourd', 38: 'bitter_gourd', 39: 'chilli_green_long', 40: 'cluster_beans', 41: 'corn', 42: 'cucumber', 43: 'cucumber_green_long', 44: 'dill_leaves', 45: 'ladys_finger', 46: 'palak', 47: 'pole_beans', 48: 'ridge_gourd_long', 49: 'snake_gourd', 50: 'snake_gourd_green_long', 51: 'sponge_gourd', 52: 'string_bean', 53: 'wax_gourd'}
+2026-09-28 22:39:40,231 | DEBUG   | agro | YOLO detection: Apple (conf: 0.798) at bbox: [          0      8.7076         600      666.16]
+2026-09-28 22:39:40,232 | DEBUG   | agro | YOLO detection: Sapodilla (conf: 0.450) at bbox: [          0           0         600      767.52]
+2026-09-28 22:39:40,232 | DEBUG   | agro | YOLO detection: 2 boxes in 1210.2ms
+2026-09-28 22:39:40,232 | DEBUG   | agro | Upload fast-accepted YOLO label: Apple (conf=0.798)
+2026-09-28 22:39:41,177 | DEBUG   | agro | CNN ensemble models: ['C:\\Users\\mdars\\OneDrive\\Desktop\\seed_project\\model1.h5']
+2026-09-28 22:39:41,178 | DEBUG   | agro | CNN ensemble output classes=54  classes.txt=54
+2026-09-28 22:39:41,178 | DEBUG   | agro | CNN prediction: Tamarind (conf=0.8039)  top5=[('Tamarind', 0.803882896900177), ('Black_Plum', 0.19611670076847076), ('Litchi', 1.2612950683887902e-07), ('Avocado', 9.510880971674851e-08), ('Betel_Nut', 9.37351529728403e-08)]
+2026-09-28 22:39:43,061 | DEBUG   | agro | CNN ensemble models: ['C:\\Users\\mdars\\OneDrive\\Desktop\\seed_project\\model1.h5']
+2026-09-28 22:39:43,061 | DEBUG   | agro | CNN ensemble output classes=54  classes.txt=54
+2026-09-28 22:39:43,061 | DEBUG   | agro | CNN prediction: Apple (conf=0.9991)  top5=[('Apple', 0.9990712404251099), ('Black_Plum', 0.0005278738681226969), ('Tamarind', 0.00030798863735981286), ('Litchi', 9.120430331677198e-05), ('Betel_Nut', 1.3142890793460538e-06)]
+2026-09-28 22:39:44,905 | DEBUG   | agro | Crop classification: 1 detections (nms@0.40) in 4673.3ms
+2026-09-28 22:39:45,110 | DEBUG   | agro | CNN ensemble models: ['C:\\Users\\mdars\\OneDrive\\Desktop\\seed_project\\model1.h5']
+2026-09-28 22:39:45,111 | DEBUG   | agro | CNN ensemble output classes=54  classes.txt=54
+2026-09-28 22:39:45,111 | DEBUG   | agro | CNN prediction: Apple (conf=1.0000)  top5=[('Apple', 1.0), ('Date', 4.527446114649681e-31), ('Black_Plum', 1.637342958853495e-33), ('Betel_Nut', 3.8207245561289174e-35), ('Guava', 9.845277458013664e-36)]
+2026-09-28 22:39:45,135 | INFO    | agro | Final prediction: class=Apple  conf=1.0000  source=offline_db_lookup
+2026-09-28 22:39:45,136 | DEBUG   | agro | Models loaded: CNN=['C:\\Users\\mdars\\OneDrive\\Desktop\\seed_project\\model1.h5']  YOLO=C:\Users\mdars\OneDrive\Desktop\seed_project\yolov8n_seeds.pt
+2026-09-28 22:39:45,136 | DEBUG   | agro | Classes (54): ['Almond', 'Amla', 'Apple', 'Avocado', 'Betel_Nut', 'Bitter_melon', 'Black_Plum', 'Bottle_gourd_long', 'Carrot', 'Cashew']
+2026-09-28 22:39:45,136 | DEBUG   | agro | KNOWN_SEED_KEYS sample: ['hog_plum', 'corn', 'bitter_melon', 'onion', 'olive', 'ladys_finger', 'palak', 'cashew', 'amla', 'papaya']
+2026-09-28 22:39:45,139 | INFO    | werkzeug | 127.0.0.1 - - [28/Sep/2026 22:39:45] "POST /predict HTTP/1.1" 200 -
+2026-09-29 09:13:20,730 | INFO    | agro | ========================================================================
+2026-09-29 09:13:20,731 | INFO    | agro | Booting Real-Time Agriculture Seeds Detection backend
+2026-09-29 09:13:20,731 | INFO    | agro | ========================================================================
+2026-09-29 09:13:20,731 | INFO    | agro | Loaded 54 classes from classes.txt
+2026-09-29 09:13:20,740 | DEBUG   | h5py._conv | Creating converter from 3 to 5
+2026-09-29 09:13:21,081 | INFO    | agro | Recovered model from model1.h5 by sanitizing model_config
+2026-09-29 09:13:21,082 | INFO    | agro | Loaded CNN model: model1.h5  input=(224, 224)  outputs=54
+2026-09-29 09:13:21,085 | ERROR   | agro | Failed to load model2.h5 : Unable to synchronously open file (bad superblock version number)
+2026-09-29 09:13:21,170 | ERROR   | agro | Failed to load model3.h5 : Unrecognized keyword arguments: ['batch_shape']
+2026-09-29 09:13:21,262 | INFO    | agro | YOLO model classes (54): ['Almond', 'Amla', 'Apple', 'Avocado', 'Betel_Nut', 'Bitter_melon', 'Black_Plum', 'Bottle_gourd_long', 'Carrot', 'Cashew']
+2026-09-29 09:13:21,262 | INFO    | agro | YOLO model has 54/54 seed classes
+2026-09-29 09:13:21,262 | DEBUG   | agro | YOLO names mapping: {0: 'Almond', 1: 'Amla', 2: 'Apple', 3: 'Avocado', 4: 'Betel_Nut', 5: 'Bitter_melon', 6: 'Black_Plum', 7: 'Bottle_gourd_long', 8: 'Carrot', 9: 'Cashew', 10: 'Cauliflower', 11: 'Chilli', 12: 'Chinese_Date', 13: 'Coriander_leaves', 14: 'Date', 15: 'Guava', 16: 'Hog_Plum', 17: 'Hyacinth_bean', 18: 'Jackfruit', 19: 'Litchi', 20: 'Malabar_Spinach', 21: 'Mango', 22: 'Okra', 23: 'Olive', 24: 'Onion', 25: 'Orange', 26: 'Palm', 27: 'Papaya', 28: 'Pea', 29: 'Pumpkin', 30: 'Radish', 31: 'Ribbed_gourd', 32: 'Sapodilla', 33: 'Spinach', 34: 'Tamarind', 35: 'Tomato', 36: 'Water_spinach', 37: 'ash_gourd', 38: 'bitter_gourd', 39: 'chilli_green_long', 40: 'cluster_beans', 41: 'corn', 42: 'cucumber', 43: 'cucumber_green_long', 44: 'dill_leaves', 45: 'ladys_finger', 46: 'palak', 47: 'pole_beans', 48: 'ridge_gourd_long', 49: 'snake_gourd', 50: 'snake_gourd_green_long', 51: 'sponge_gourd', 52: 'string_bean', 53: 'wax_gourd'}
+2026-09-29 09:13:21,262 | INFO    | agro | Loaded YOLO model: yolov8n_seeds.pt
+2026-09-29 09:13:21,266 | INFO    | agro | Starting Flask dev server at http://127.0.0.1:5000
+2026-09-29 09:13:21,266 | INFO    | agro | CNN ensemble : 1 model(s)
+2026-09-29 09:13:21,266 | INFO    | agro | YOLO         : loaded
+2026-09-29 09:13:21,266 | INFO    | agro | Classes      : 54
+2026-09-29 09:13:21,284 | INFO    | werkzeug | [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.20.153.187:5000
+2026-09-29 09:13:21,285 | INFO    | werkzeug | [33mPress CTRL+C to quit[0m
+2026-09-29 09:13:21,782 | INFO    | werkzeug | 127.0.0.1 - - [29/Sep/2026 09:13:21] "GET /api/health HTTP/1.1" 200 -
+2026-09-29 09:13:22,022 | INFO    | werkzeug | 127.0.0.1 - - [29/Sep/2026 09:13:22] "GET / HTTP/1.1" 200 -
+2026-09-29 09:13:22,252 | INFO    | werkzeug | 127.0.0.1 - - [29/Sep/2026 09:13:22] "[36mGET /static/style.css HTTP/1.1[0m" 304 -
+2026-09-29 09:13:22,254 | INFO    | werkzeug | 127.0.0.1 - - [29/Sep/2026 09:13:22] "[36mGET /static/script.js HTTP/1.1[0m" 304 -
+2026-09-29 09:13:22,496 | INFO    | werkzeug | 127.0.0.1 - - [29/Sep/2026 09:13:22] "GET /api/health HTTP/1.1" 200 -

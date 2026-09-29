@@ -1,0 +1,969 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detection History Â· AgroSeed.AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%230e6b3a'/%3E%3Ctext x='32' y='42' font-size='32' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'%3EðŸŒ±%3C/text%3E%3C/svg%3E" />
+</head>
+<body>
+
+<!-- ====================================================================== -->
+<!--                              TOP BANNER                                -->
+<!-- ====================================================================== -->
+<div class="top-banner">
+    <div class="banner-inner">
+        <span class="banner-pill">History</span>
+        <span class="banner-text">
+            Every prediction made by the system is logged here with full traceability.
+        </span>
+        <span class="banner-meta">{{ count }} record(s)</span>
+    </div>
+</div>
+
+<!-- ====================================================================== -->
+<!--                                HEADER                                  -->
+<!-- ====================================================================== -->
+<header class="site-header">
+    <div class="header-inner">
+        <a href="/" class="brand">
+            <div class="brand-icon">
+                <svg viewBox="0 0 64 64" width="40" height="40">
+                    <circle cx="32" cy="32" r="30" fill="#0e6b3a"/>
+                    <path d="M32 14c-6 6-10 12-10 20a10 10 0 0 0 20 0c0-8-4-14-10-20z" fill="#a8e6a3"/>
+                    <path d="M32 22v22" stroke="#0e6b3a" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <div class="brand-text">
+                <span class="brand-title">AgroSeed.AI</span>
+                <span class="brand-sub">Detection History</span>
+            </div>
+        </a>
+
+        <nav class="primary-nav">
+            <a href="/" class="nav-link" data-i18n="nav_home">Home</a>
+            <a href="/#detect" class="nav-link" data-i18n="nav_detect">Detect</a>
+            <a href="/#mandi" class="nav-link" data-i18n="nav_mandi">Mandi Prices</a>
+            <a href="/#classes" class="nav-link" data-i18n="nav_catalog">Seed Catalog</a>
+            <a href="/#about" class="nav-link" data-i18n="nav_about">About</a>
+            <a href="/history" class="nav-link active" data-i18n="nav_history">History</a>
+        </nav>
+
+        <button id="langToggle" class="icon-btn" title="Switch language">
+            <span id="langLabel">à²•à²¨à³à²¨à²¡</span>
+        </button>
+    </div>
+</header>
+
+<!-- ====================================================================== -->
+<!--                              HISTORY HERO                              -->
+<!-- ====================================================================== -->
+<section class="hero hero-small">
+    <div class="hero-bg">
+        <div class="bg-blob blob1"></div>
+        <div class="bg-blob blob2"></div>
+    </div>
+    <div class="hero-inner">
+        <h1 class="hero-title">
+            Detection <span class="grad-text">History</span>
+        </h1>
+        <p class="hero-sub">
+            Every prediction the system has ever made â€” with timestamps,
+            confidences, prediction source and image preview.
+        </p>
+
+        <div class="hero-stats">
+            <div class="stat-card">
+                <div class="stat-num" id="totalCount">{{ count }}</div>
+                <div class="stat-label">Total Predictions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num" id="uniqueCount">0</div>
+                <div class="stat-label">Unique Seeds</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num" id="avgConf">0%</div>
+                <div class="stat-label">Avg. Confidence</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-num" id="cameraCount">0</div>
+                <div class="stat-label">Camera Captures</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ====================================================================== -->
+<!--                          HISTORY TOOLBAR                               -->
+<!-- ====================================================================== -->
+<section class="section">
+    <div class="hist-toolbar">
+        <input type="text" id="histSearch" class="select-input"
+               placeholder="Filter by seed name or filename..." />
+
+        <select id="histSource" class="select-input">
+            <option value="">All sources</option>
+            <option value="upload">Upload only</option>
+            <option value="camera">Camera only</option>
+            <option value="web_fallback">Web-fallback only</option>
+        </select>
+
+        <select id="histConfidence" class="select-input">
+            <option value="">Any confidence</option>
+            <option value="high">â‰¥ 80%</option>
+            <option value="med">55% â€“ 80%</option>
+            <option value="low">&lt; 55%</option>
+        </select>
+
+        <a href="/api/export_history" class="btn btn-primary">Export CSV</a>
+
+        <button id="btnClearHist" class="btn btn-danger">Clear History</button>
+    </div>
+
+    <!-- ============ TABLE ============ -->
+    <div class="card">
+        <div class="card-header">
+            <h3>All Predictions</h3>
+            <div class="status-pill ok"><span id="filteredCount">{{ count }}</span> shown</div>
+        </div>
+
+        <div class="hist-table-wrap">
+            <table class="hist-table" id="histTable">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Time (UTC)</th>
+                        <th>Image</th>
+                        <th>Predicted Class</th>
+                        <th>Confidence</th>
+                        <th>Source</th>
+                        <th>Top-5</th>
+                        <th>Notes</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="histBody">
+                {% for r in rows %}
+                    <tr data-row="{{ loop.index0 }}"
+                        data-class="{{ r.predicted_class|lower }}"
+                        data-source="{{ r.source|lower }}"
+                        data-conf="{{ r.confidence }}">
+                        <td>{{ loop.index }}</td>
+                        <td>
+                            <span class="ts">{{ r.timestamp }}</span>
+                        </td>
+                        <td>
+                            {% if r.filename %}
+                                <a href="{{ url_for('static', filename='uploads/' + r.filename) }}" target="_blank">
+                                    <img class="hist-thumb"
+                                         src="{{ url_for('static', filename='uploads/' + r.filename) }}"
+                                         alt="thumb"
+                                         onerror="this.style.display='none'"/>
+                                </a>
+                            {% else %}
+                                <span class="muted small">â€” no img â€”</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <strong class="cls-name">{{ r.predicted_class }}</strong>
+                        </td>
+                        <td>
+                            {% set c = (r.confidence|float) * 100 %}
+                            {% if c >= 80 %}
+                                <span class="conf-pill conf-high">{{ "%.1f"|format(c) }}%</span>
+                            {% elif c >= 55 %}
+                                <span class="conf-pill conf-med">{{ "%.1f"|format(c) }}%</span>
+                            {% else %}
+                                <span class="conf-pill conf-low">{{ "%.1f"|format(c) }}%</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="src-pill">{{ r.source }}</span>
+                        </td>
+                        <td>
+                            <details class="top5-details">
+                                <summary>show</summary>
+                                <pre>{{ r.top5 }}</pre>
+                            </details>
+                        </td>
+                        <td class="notes-cell">{{ r.notes }}</td>
+                        <td>
+                            <button class="btn btn-ghost small btn-info-row"
+                                    data-name="{{ r.predicted_class }}">â„¹ Info</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% if count == 0 %}
+            <div class="empty-state">
+                <div class="big-icon">ðŸ“­</div>
+                <h3>No history yet</h3>
+                <p>Run a few detections from the <a href="/">home page</a> and they will appear here.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- ============ INFO MODAL ============ -->
+    <div id="infoModal" class="modal" style="display:none;">
+        <div class="modal-card">
+            <div class="modal-head">
+                <h3 id="infoModalTitle">Seed Information</h3>
+                <button class="icon-btn" id="closeModal">âœ•</button>
+            </div>
+            </div>
+    </div>
+</section>
+<!-- ====================================================================== -->
+<!--                       CLASS DISTRIBUTION (live)                        -->
+<!-- ====================================================================== -->
+<section class="section">
+    <div class="section-head">
+        <span class="kicker">Visual Summary</span>
+        <h2 class="section-title">Class &amp; Confidence Distribution</h2>
+        <p class="section-sub">
+            Live overview of the predictions table above â€” recomputed
+            whenever you change the filters.
+        </p>
+    </div>
+    <div class="detect-grid">
+        <div class="card">
+            <div class="card-header">
+                <h3>Top Predicted Classes</h3>
+                <div class="status-pill ok" id="topClassesCount">live</div>
+            </div>
+            <ul class="dist-list" id="topClassesList">
+                <li class="muted small">Computingâ€¦</li>
+            </ul>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3>ðŸ“Š Confidence Bands</h3>
+                <div class="status-pill ok">live</div>
+            </div>
+            <ul class="dist-list" id="confBandsList">
+                <li>
+                    <span>High (â‰¥ 80 %)</span>
+                    <span class="dist-bar"><span id="bandHighFill" style="width:0%;background:var(--ok)"></span></span>
+                    <span class="dist-num" id="bandHighNum">0</span>
+                </li>
+                <li>
+                    <span>Medium (55 % â€“ 80 %)</span>
+                    <span class="dist-bar"><span id="bandMedFill" style="width:0%;background:var(--warn)"></span></span>
+                    <span class="dist-num" id="bandMedNum">0</span>
+                </li>
+                <li>
+                    <span>Low (&lt; 55 %)</span>
+                    <span class="dist-bar"><span id="bandLowFill" style="width:0%;background:var(--err)"></span></span>
+                    <span class="dist-num" id="bandLowNum">0</span>
+                </li>
+            </ul>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                <h3>ðŸ“¡ Source Breakdown</h3>
+                <div class="status-pill ok">live</div>
+            </div>
+            <ul class="dist-list" id="srcBreakdown">
+                <li>
+                    <span>Camera</span>
+                    <span class="dist-bar"><span id="srcCamFill" style="width:0%;background:var(--green-600)"></span></span>
+                    <span class="dist-num" id="srcCamNum">0</span>
+                </li>
+                <li>
+                    <span>ðŸ–¼ï¸ Upload</span>
+                    <span class="dist-bar"><span id="srcUpFill" style="width:0%;background:var(--info)"></span></span>
+                    <span class="dist-num" id="srcUpNum">0</span>
+                </li>
+                <li>
+                    <span>ðŸŒ Web fallback</span>
+                    <span class="dist-bar"><span id="srcWebFill" style="width:0%;background:var(--gold-500)"></span></span>
+                    <span class="dist-num" id="srcWebNum">0</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</section>
+<!-- ====================================================================== -->
+<!--                          DOCUMENTATION                                 -->
+<!-- ====================================================================== -->
+<section class="section section-alt">
+    <div class="section-head">
+        <span class="kicker">Reference</span>
+        <h2 class="section-title">About this History log</h2>
+        <p class="section-sub">
+            Every row in this table is also written to
+            <code>history.csv</code> in the project root.
+        </p>
+    </div>
+    <div class="about-grid">
+        <div class="about-card">
+            <div class="about-icon">DATA</div>
+            <h3>Schema</h3>
+            <p>
+                <code>id, timestamp, filename, predicted_class,
+                confidence, source, top5, notes</code> â€” written by
+                <code>append_history()</code> in <code>app.py</code>.
+            </p>
+        </div>
+        <div class="about-card">
+            <div class="about-icon">AUTO</div>
+            <h3>Auto-rotation</h3>
+            <p>
+                Capped at <strong>5 000 rows</strong>. Older rows are dropped
+                automatically when the cap is exceeded so the file
+                never grows unbounded.
+            </p>
+        </div>
+        <div class="about-card">
+            <div class="about-icon">CSV</div>
+            <h3>CSV Export</h3>
+            <p>
+                Click <strong>Export CSV</strong> to download the entire
+                history file directly. Open in Excel, Pandas or R for
+                further analysis.
+            </p>
+        </div>
+        <div class="about-card">
+            <div class="about-icon">FILTER</div>
+            <h3>Filtering</h3>
+            <p>
+                Three filter axes: free-text seed/filename match, prediction
+                source (camera, upload, web-fallback) and confidence band
+                (high / medium / low). Filters compose.
+            </p>
+        </div>
+        <div class="about-card">
+            <div class="about-icon">INFO</div>
+            <h3>Per-row Info</h3>
+            <p>
+                Click <strong>â„¹ Info</strong> on any row to fetch the
+                Karnataka knowledge-base entry for that seed in a modal â€”
+                no page reload.
+            </p>
+        </div>
+        <div class="about-card">
+            <div class="about-icon">CLEAR</div>
+            <h3>Clear History</h3>
+            <p>
+                <strong>Clear History</strong> deletes
+                <code>history.csv</code> entirely. Confirmation is required;
+                action is irreversible.
+            </p>
+            <div class="modal-body" id="infoModalBody">
+                <p class="muted">Loadingâ€¦</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ====================================================================== -->
+<!--                       CLASS DISTRIBUTION (live)                        -->
+<!-- ====================================================================== -->
+<section class="section">
+    <div class="section-head">
+        <span class="kicker">Visual Summary</span>
+        <h2 class="section-title">Class &amp; Confidence Distribution</h2>
+        <p class="section-sub">
+            Live overview of the predictions table above â€” recomputed
+            whenever you change the filters.
+        </p>
+    </div>
+
+    <div class="detect-grid">
+        <div class="card">
+            <div class="card-header">
+                <h3>Top Predicted Classes</h3>
+                <div class="status-pill ok" id="topClassesCount">live</div>
+            </div>
+            <ul class="dist-list" id="topClassesList">
+                <li class="muted small">Computingâ€¦</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3>ðŸ“Š Confidence Bands</h3>
+                <div class="status-pill ok">live</div>
+            </div>
+            <ul class="dist-list" id="confBandsList">
+                <li>
+                    <span>High (â‰¥ 80 %)</span>
+                    <span class="dist-bar"><span id="bandHighFill" style="width:0%;background:var(--ok)"></span></span>
+                    <span class="dist-num" id="bandHighNum">0</span>
+                </li>
+                <li>
+                    <span>Medium (55 % â€“ 80 %)</span>
+                    <span class="dist-bar"><span id="bandMedFill" style="width:0%;background:var(--warn)"></span></span>
+                    <span class="dist-num" id="bandMedNum">0</span>
+                </li>
+                <li>
+                    <span>Low (&lt; 55 %)</span>
+                    <span class="dist-bar"><span id="bandLowFill" style="width:0%;background:var(--err)"></span></span>
+                    <span class="dist-num" id="bandLowNum">0</span>
+                </li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3>ðŸ“¡ Source Breakdown</h3>
+                <div class="status-pill ok">live</div>
+            </div>
+            <ul class="dist-list" id="srcBreakdown">
+                <li>
+                    <span>Camera</span>
+                    <span class="dist-bar"><span id="srcCamFill" style="width:0%;background:var(--green-600)"></span></span>
+                    <span class="dist-num" id="srcCamNum">0</span>
+                </li>
+                <li>
+                    <span>ðŸ–¼ï¸ Upload</span>
+                    <span class="dist-bar"><span id="srcUpFill" style="width:0%;background:var(--info)"></span></span>
+                    <span class="dist-num" id="srcUpNum">0</span>
+                </li>
+                <li>
+                    <span>ðŸŒ Web fallback</span>
+                    <span class="dist-bar"><span id="srcWebFill" style="width:0%;background:var(--gold-500)"></span></span>
+                    <span class="dist-num" id="srcWebNum">0</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<!-- ====================================================================== -->
+<!--                          DOCUMENTATION                                 -->
+<!-- ====================================================================== -->
+<section class="section section-alt">
+    <div class="section-head">
+        <span class="kicker">Reference</span>
+        <h2 class="section-title">About this History log</h2>
+        <p class="section-sub">
+            Every row in this table is also written to
+            <code>history.csv</code> in the project root.
+        </p>
+    </div>
+
+    <div class="about-grid">
+        <div class="about-card">
+            <div class="about-icon">DATA</div>
+            <h3>Schema</h3>
+            <p>
+                <code>id, timestamp, filename, predicted_class,
+                confidence, source, top5, notes</code> â€” written by
+                <code>append_history()</code> in <code>app.py</code>.
+            </p>
+        </div>
+        <div class="about-card">
+            <div class="about-icon">AUTO</div>
+            <h3>Auto-rotation</h3>
+            <p>
+                Capped at <strong>5 000 rows</strong>. Older rows are dropped
+                automatically when the cap is exceeded so the file
+                never grows unbounded.
+            </p>
+        </div>
+        <div class="about-card">
+            <div class="about-icon">CSV</div>
+            <h3>CSV Export</h3>
+            <p>
+                Click <strong>Export CSV</strong> to download the entire
+                history file directly. Open in Excel, Pandas or R for
+                further analysis.
+            </p>
+        </div>
+        <div class="about-card">
+            <div class="about-icon">FILTER</div>
+            <h3>Filtering</h3>
+            <p>
+                Three filter axes: free-text seed/filename match, prediction
+                source (camera, upload, web-fallback) and confidence band
+                (high / medium / low). Filters compose.
+            </p>
+        </div>
+        <div class="about-card">
+            <div class="about-icon">INFO</div>
+            <h3>Per-row Info</h3>
+            <p>
+                Click <strong>â„¹ Info</strong> on any row to fetch the
+                Karnataka knowledge-base entry for that seed in a modal â€”
+                no page reload.
+            </p>
+        </div>
+        <div class="about-card">
+            <div class="about-icon">CLEAR</div>
+            <h3>Clear History</h3>
+            <p>
+                <strong>Clear History</strong> deletes
+                <code>history.csv</code> entirely. Confirmation is required;
+                action is irreversible.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- ====================================================================== -->
+<!--                                FOOTER                                  -->
+<!-- ====================================================================== -->
+<footer class="site-footer">
+    <div class="footer-inner">
+        <div class="footer-col">
+            <div class="brand">
+                <div class="brand-icon">
+                    <svg viewBox="0 0 64 64" width="32" height="32">
+                        <circle cx="32" cy="32" r="30" fill="#0e6b3a"/>
+                        <path d="M32 14c-6 6-10 12-10 20a10 10 0 0 0 20 0c0-8-4-14-10-20z" fill="#a8e6a3"/>
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <span class="brand-title">AgroSeed.AI</span>
+                    <span class="brand-sub">Detection History</span>
+                </div>
+            </div>
+            <p class="muted small">
+                Each prediction is appended to <code>history.csv</code>
+                in the project root and shown above with full traceability.
+            </p>
+        </div>
+
+        <div class="footer-col">
+            <h5>Quick Links</h5>
+            <ul class="footer-links">
+                <li><a href="/">Live Detection</a></li>
+                <li><a href="/#mandi">Mandi Prices</a></li>
+                <li><a href="/#classes">Seed Catalog</a></li>
+                <li><a href="/api/export_history">Export CSV</a></li>
+                <li><a href="/api/health">API Health</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-col">
+            <h5>Filters</h5>
+            <ul class="footer-links">
+                <li>By seed name</li>
+                <li>By prediction source</li>
+                <li>By confidence band</li>
+                <li>Combined filters</li>
+                <li>Live row counter</li>
+            </ul>
+        </div>
+
+        <div class="footer-col">
+            <h5>Storage</h5>
+            <ul class="footer-links">
+                <li>CSV file backed</li>
+                <li>Rows capped at 5000</li>
+                <li>Auto-rotation</li>
+                <li>One-click clear</li>
+                <li>Downloadable export</li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        Â© 2026 Â· AgroSeed.AI Â·BCA Research Project
+    </div>
+</footer>
+
+<div id="toast" class="toast"></div>
+
+<!-- ====================================================================== -->
+<!--                          PAGE-SPECIFIC SCRIPT                          -->
+<!-- ====================================================================== -->
+<script>
+/* =====================================================================
+ *  HISTORY PAGE â€” client-side filtering, stats, info modal & clear
+ * ===================================================================== */
+
+(function () {
+    "use strict";
+
+    const $ = (sel, parent = document) => parent.querySelector(sel);
+    const $$ = (sel, parent = document) => Array.from(parent.querySelectorAll(sel));
+
+    /* -------------------------------------------------- light mode ---- */
+    document.documentElement.dataset.theme = "light";
+    try { localStorage.removeItem("theme"); } catch (e) {}
+
+    /* -------------------------------------------------- language toggle */
+    const historyI18N = {
+        en: {
+            "[data-i18n='nav_home']": "Home",
+            "[data-i18n='nav_detect']": "Detect",
+            "[data-i18n='nav_mandi']": "Mandi Prices",
+            "[data-i18n='nav_catalog']": "Seed Catalog",
+            "[data-i18n='nav_about']": "About",
+            "[data-i18n='nav_history']": "History",
+            ".banner-pill": "History",
+            ".banner-text": "Every prediction made by the system is logged here with full traceability.",
+            ".brand-sub": "Detection History",
+            ".hero-title": "Detection <span class='grad-text'>History</span>",
+            ".hero-sub": "Every prediction the system has ever made - with timestamps, confidences, prediction source and image preview.",
+            "#histSearch[placeholder]": "Filter by seed name or filename...",
+            "#btnClearHist": "Clear History",
+        },
+        kn: {
+            "[data-i18n='nav_home']": "ಮುಖಪುಟ",
+            "[data-i18n='nav_detect']": "ಗುರುತಿಸಿ",
+            "[data-i18n='nav_mandi']": "ಮಂಡಿ ಬೆಲೆ",
+            "[data-i18n='nav_catalog']": "ಬೀಜ ಪಟ್ಟಿ",
+            "[data-i18n='nav_about']": "ವಿವರ",
+            "[data-i18n='nav_history']": "ಇತಿಹಾಸ",
+            ".banner-pill": "ಇತಿಹಾಸ",
+            ".banner-text": "ಸಿಸ್ಟಮ್ ಮಾಡಿದ ಪ್ರತಿಯೊಂದು ಗುರುತಿಸುವಿಕೆಯ ದಾಖಲೆಯನ್ನು ಇಲ್ಲಿ ನೋಡಬಹುದು.",
+            ".brand-sub": "ಗುರುತಿಸುವಿಕೆ ಇತಿಹಾಸ",
+            ".hero-title": "ಗುರುತಿಸುವಿಕೆ <span class='grad-text'>ಇತಿಹಾಸ</span>",
+            ".hero-sub": "ಸಮಯ, ವಿಶ್ವಾಸಮಟ್ಟ, ಮೂಲ ಮತ್ತು ಚಿತ್ರ ಪೂರ್ವವೀಕ್ಷಣೆಯೊಂದಿಗೆ ಎಲ್ಲಾ ಗುರುತಿಸುವಿಕೆಗಳ ಪಟ್ಟಿ.",
+            "#histSearch[placeholder]": "ಬೀಜದ ಹೆಸರು ಅಥವಾ ಫೈಲ್ ಹೆಸರಿನಿಂದ ಹುಡುಕಿ...",
+            "#btnClearHist": "ಇತಿಹಾಸ ತೆರವುಗೊಳಿಸಿ",
+        },
+    };
+
+    const SEED_NAME_KN = {
+        almond: "ಬಾದಾಮಿ", amla: "ನೆಲ್ಲಿಕಾಯಿ", apple: "ಸೇಬು",
+        avocado: "ಅವಕಾಡೊ", betel_nut: "ಅಡಿಕೆ", bitter_melon: "ಹಾಗಲಕಾಯಿ",
+        black_plum: "ನೇರಳೆ", bottle_gourd_long: "ಸೋರೆಕಾಯಿ",
+        carrot: "ಕ್ಯಾರೆಟ್", cashew: "ಗೋಡಂಬಿ", cauliflower: "ಹೂಕೋಸು",
+        chilli: "ಮೆಣಸಿನಕಾಯಿ", chinese_date: "ಬೋರೆಹಣ್ಣು",
+        coriander_leaves: "ಕೊತ್ತಂಬರಿ ಸೊಪ್ಪು", date: "ಖರ್ಜೂರ",
+        guava: "ಪೇರಳೆ", hog_plum: "ಅಂಬಟೆ", hyacinth_bean: "ಅವರೆಕಾಯಿ",
+        jackfruit: "ಹಲಸು", litchi: "ಲೀಚಿ", malabar_spinach: "ಬಸಳೆ ಸೊಪ್ಪು",
+        mango: "ಮಾವಿನಹಣ್ಣು", okra: "ಬೆಂಡೆಕಾಯಿ", olive: "ಆಲಿವ್",
+        onion: "ಈರುಳ್ಳಿ", orange: "ಕಿತ್ತಳೆ", palm: "ತಾಳೆ",
+        papaya: "ಪಪ್ಪಾಯಿ", pea: "ಬಟಾಣಿ", pumpkin: "ಕುಂಬಳಕಾಯಿ",
+        radish: "ಮೂಲಂಗಿ", ribbed_gourd: "ಹೀರೆಕಾಯಿ", sapodilla: "ಚಿಕ್ಕು",
+        spinach: "ಪಾಲಕ್ ಸೊಪ್ಪು", tamarind: "ಹುಣಸೆ", tomato: "ಟೊಮ್ಯಾಟೊ",
+        water_spinach: "ನೀರು ಬಸಳೆ", ash_gourd: "ಬೂದು ಕುಂಬಳಕಾಯಿ",
+        bitter_gourd: "ಹಾಗಲಕಾಯಿ", chilli_green_long: "ಉದ್ದ ಹಸಿರು ಮೆಣಸಿನಕಾಯಿ",
+        cluster_beans: "ಗೋರಿಕಾಯಿ", corn: "ಜೋಳ", cucumber: "ಸೌತೆಕಾಯಿ",
+        cucumber_green_long: "ಉದ್ದ ಹಸಿರು ಸೌತೆಕಾಯಿ",
+        dill_leaves: "ಸಬ್ಬಸಿಗೆ ಸೊಪ್ಪು", ladys_finger: "ಬೆಂಡೆಕಾಯಿ",
+        palak: "ಪಾಲಕ್", pole_beans: "ಅವರೆಕಾಯಿ",
+        ridge_gourd_long: "ಉದ್ದ ಹೀರೆಕಾಯಿ", snake_gourd: "ಪಡವಲಕಾಯಿ",
+        snake_gourd_green_long: "ಉದ್ದ ಹಸಿರು ಪಡವಲಕಾಯಿ",
+        sponge_gourd: "ತುರಾಯಿ", string_bean: "ಹುರಳಿಕಾಯಿ",
+        wax_gourd: "ಬೂದು ಕುಂಬಳಕಾಯಿ",
+    };
+
+    function seedKey(name) {
+        return (name || "").toString().trim().toLowerCase()
+            .replace(/\s+/g, "_")
+            .replace(/_+/g, "_");
+    }
+
+    function humaniseSeed(name) {
+        return (name || "").toString().replace(/_/g, " ")
+            .replace(/\b\w/g, ch => ch.toUpperCase()).trim();
+    }
+
+    function seedLabel(name) {
+        return currentLang === "kn" ? (SEED_NAME_KN[seedKey(name)] || humaniseSeed(name)) : humaniseSeed(name);
+    }
+
+    function translateHistorySeedNames() {
+        $$(".cls-name").forEach(el => {
+            const raw = el.dataset.seedName || el.textContent;
+            el.dataset.seedName = raw.trim();
+            el.textContent = seedLabel(raw);
+            el.title = humaniseSeed(raw);
+        });
+    }
+
+    let currentLang = (() => {
+        try { return localStorage.getItem("lang") || "en"; } catch { return "en"; }
+    })();
+
+    function applyHistoryLang(lang) {
+        currentLang = lang === "kn" ? "kn" : "en";
+        try { localStorage.setItem("lang", currentLang); } catch (e) {}
+        document.documentElement.lang = currentLang;
+        const dict = historyI18N[currentLang] || historyI18N.en;
+        Object.entries(dict).forEach(([sel, value]) => {
+            const placeholderMatch = sel.match(/^(.+?)\[placeholder\]$/);
+            if (placeholderMatch) {
+                document.querySelectorAll(placeholderMatch[1]).forEach(el => el.setAttribute("placeholder", value));
+                return;
+            }
+            document.querySelectorAll(sel).forEach(el => {
+                if (value.includes("<")) el.innerHTML = value;
+                else el.textContent = value;
+            });
+        });
+        const langLabel = $("#langLabel");
+        if (langLabel) langLabel.textContent = currentLang === "kn" ? "EN" : "ಕನ್ನಡ";
+        translateHistorySeedNames();
+    }
+
+    $("#langToggle")?.addEventListener("click", () => {
+        applyHistoryLang(currentLang === "kn" ? "en" : "kn");
+        renderDistribution();
+    });
+    applyHistoryLang(currentLang);
+
+    /* -------------------------------------------------- toast helper -- */
+    const toast = $("#toast");
+    function showToast(msg, type = "ok") {
+        if (!toast) return;
+        toast.textContent = msg;
+        toast.dataset.type = type;
+        toast.classList.add("show");
+        clearTimeout(toast._t);
+        toast._t = setTimeout(() => toast.classList.remove("show"), 3200);
+    }
+
+    /* -------------------------------------------------- stats compute - */
+    const rows = $$("#histBody tr");
+    const totalEl = $("#totalCount");
+    const uniqueEl = $("#uniqueCount");
+    const avgEl = $("#avgConf");
+    const camEl = $("#cameraCount");
+
+    function computeStats(visibleOnly = false) {
+        const set = new Set();
+        let confSum = 0, n = 0, cam = 0;
+        const targetRows = visibleOnly ? rows.filter(r => r.style.display !== "none") : rows;
+        targetRows.forEach(r => {
+            const cls = r.dataset.class;
+            const conf = parseFloat(r.dataset.conf || "0");
+            const src = r.dataset.source || "";
+            if (cls) set.add(cls);
+            if (!isNaN(conf)) { confSum += conf; n++; }
+            if (src.includes("camera")) cam++;
+        });
+        uniqueEl.textContent = set.size;
+        avgEl.textContent = n ? ((confSum / n) * 100).toFixed(1) + "%" : "0%";
+        camEl.textContent = cam;
+        totalEl.textContent = targetRows.length;
+    }
+    computeStats();
+
+    /* -------------------------------------------------- filtering ----- */
+    const search = $("#histSearch");
+    const srcSel = $("#histSource");
+    const confSel = $("#histConfidence");
+    const filteredCount = $("#filteredCount");
+
+    function applyFilters() {
+        const q = (search.value || "").toLowerCase().trim();
+        const src = srcSel.value;
+        const cb = confSel.value;
+        let shown = 0;
+
+        rows.forEach(r => {
+            let ok = true;
+
+            if (q && !(r.dataset.class || "").includes(q) &&
+                !r.textContent.toLowerCase().includes(q)) ok = false;
+
+            if (src && !(r.dataset.source || "").includes(src)) ok = false;
+
+            if (cb) {
+                const c = parseFloat(r.dataset.conf || "0");
+                if (cb === "high" && c < 0.80) ok = false;
+                else if (cb === "med" && (c < 0.55 || c >= 0.80)) ok = false;
+                else if (cb === "low" && c >= 0.55) ok = false;
+            }
+
+            r.style.display = ok ? "" : "none";
+            if (ok) shown++;
+        });
+        filteredCount.textContent = shown;
+        computeStats(true);
+    }
+
+    [search, srcSel, confSel].forEach(el => {
+        el.addEventListener("input", () => { applyFilters(); renderDistribution(); });
+        el.addEventListener("change", () => { applyFilters(); renderDistribution(); });
+    });
+
+    /* -------------------------------------------------- distribution -- */
+    function getVisibleRows() {
+        return rows.filter(r => r.style.display !== "none");
+    }
+    function renderDistribution() {
+        const visible = getVisibleRows();
+        // ---- top classes ----
+        const counts = {};
+        let high = 0, med = 0, low = 0;
+        let cam = 0, up = 0, web = 0;
+        visible.forEach(r => {
+            const cls = r.dataset.class || "â€”";
+            counts[cls] = (counts[cls] || 0) + 1;
+            const c = parseFloat(r.dataset.conf || "0");
+            if (c >= 0.80) high++;
+            else if (c >= 0.55) med++;
+            else low++;
+            const s = r.dataset.source || "";
+            if (s.includes("camera")) cam++;
+            else if (s.includes("upload")) up++;
+            if (s.includes("web_fallback")) web++;
+        });
+        const topList = $("#topClassesList");
+        $("#topClassesCount").textContent = `${visible.length} pred`;
+        const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 8);
+        const max = sorted.length ? sorted[0][1] : 1;
+        topList.innerHTML = "";
+        if (!sorted.length) {
+            topList.innerHTML = `<li class="muted small">No data â€” adjust filters.</li>`;
+        } else {
+            sorted.forEach(([cls, n]) => {
+                const pct = max ? (n / max) * 100 : 0;
+                const li = document.createElement("li");
+                li.innerHTML = `
+                    <span title="${humaniseSeed(cls)}">${seedLabel(cls)}</span>
+                    <span class="dist-bar"><span style="width:${pct.toFixed(1)}%;background:var(--green-600)"></span></span>
+                    <span class="dist-num">${n}</span>`;
+                topList.appendChild(li);
+            });
+        }
+        // ---- confidence bands ----
+        const total = Math.max(1, high + med + low);
+        $("#bandHighFill").style.width = (high / total * 100).toFixed(1) + "%";
+        $("#bandMedFill").style.width  = (med  / total * 100).toFixed(1) + "%";
+        $("#bandLowFill").style.width  = (low  / total * 100).toFixed(1) + "%";
+        $("#bandHighNum").textContent = high;
+        $("#bandMedNum").textContent  = med;
+        $("#bandLowNum").textContent  = low;
+        // ---- source breakdown ----
+        const totS = Math.max(1, cam + up + web);
+        $("#srcCamFill").style.width = (cam / totS * 100).toFixed(1) + "%";
+        $("#srcUpFill").style.width  = (up  / totS * 100).toFixed(1) + "%";
+        $("#srcWebFill").style.width = (web / totS * 100).toFixed(1) + "%";
+        $("#srcCamNum").textContent = cam;
+        $("#srcUpNum").textContent  = up;
+        $("#srcWebNum").textContent = web;
+    }
+    renderDistribution();
+
+    /* -------------------------------------------------- distribution -- */
+    function getVisibleRows() {
+        return rows.filter(r => r.style.display !== "none");
+    }
+
+    function renderDistribution() {
+        const visible = getVisibleRows();
+
+        // ---- top classes ----
+        const counts = {};
+        let high = 0, med = 0, low = 0;
+        let cam = 0, up = 0, web = 0;
+        visible.forEach(r => {
+            const cls = r.dataset.class || "â€”";
+            counts[cls] = (counts[cls] || 0) + 1;
+            const c = parseFloat(r.dataset.conf || "0");
+            if (c >= 0.80) high++;
+            else if (c >= 0.55) med++;
+            else low++;
+            const s = r.dataset.source || "";
+            if (s.includes("camera")) cam++;
+            else if (s.includes("upload")) up++;
+            if (s.includes("web_fallback")) web++;
+        });
+
+        const topList = $("#topClassesList");
+        $("#topClassesCount").textContent = `${visible.length} pred`;
+        const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 8);
+        const max = sorted.length ? sorted[0][1] : 1;
+        topList.innerHTML = "";
+        if (!sorted.length) {
+            topList.innerHTML = `<li class="muted small">No data â€” adjust filters.</li>`;
+        } else {
+            sorted.forEach(([cls, n]) => {
+                const pct = max ? (n / max) * 100 : 0;
+                const li = document.createElement("li");
+                li.innerHTML = `
+                    <span title="${humaniseSeed(cls)}">${seedLabel(cls)}</span>
+                    <span class="dist-bar"><span style="width:${pct.toFixed(1)}%;background:var(--green-600)"></span></span>
+                    <span class="dist-num">${n}</span>`;
+                topList.appendChild(li);
+            });
+        }
+
+        // ---- confidence bands ----
+        const total = Math.max(1, high + med + low);
+        $("#bandHighFill").style.width = (high / total * 100).toFixed(1) + "%";
+        $("#bandMedFill").style.width  = (med  / total * 100).toFixed(1) + "%";
+        $("#bandLowFill").style.width  = (low  / total * 100).toFixed(1) + "%";
+        $("#bandHighNum").textContent = high;
+        $("#bandMedNum").textContent  = med;
+        $("#bandLowNum").textContent  = low;
+
+        // ---- source breakdown ----
+        const totS = Math.max(1, cam + up + web);
+        $("#srcCamFill").style.width = (cam / totS * 100).toFixed(1) + "%";
+        $("#srcUpFill").style.width  = (up  / totS * 100).toFixed(1) + "%";
+        $("#srcWebFill").style.width = (web / totS * 100).toFixed(1) + "%";
+        $("#srcCamNum").textContent = cam;
+        $("#srcUpNum").textContent  = up;
+        $("#srcWebNum").textContent = web;
+    }
+    renderDistribution();
+
+    /* -------------------------------------------------- clear history - */
+    $("#btnClearHist")?.addEventListener("click", async () => {
+        if (!confirm("Clear ALL history rows? This cannot be undone.")) return;
+        try {
+            const r = await fetch("/api/clear_history", { method: "POST" });
+            const d = await r.json();
+            if (d.ok) {
+                showToast("History cleared.", "ok");
+                setTimeout(() => location.reload(), 600);
+            } else {
+                showToast("Failed to clear.", "err");
+            }
+        } catch (e) {
+            showToast("Network error.", "err");
+        }
+    });
+
+    /* -------------------------------------------------- info modal ---- */
+    const modal = $("#infoModal");
+    const modalTitle = $("#infoModalTitle");
+    const modalBody = $("#infoModalBody");
+
+    $("#closeModal")?.addEventListener("click", () => {
+        modal.style.display = "none";
+    });
+    modal?.addEventListener("click", (e) => {
+        if (e.target === modal) modal.style.display = "none";
+    });
+
+    $$(".btn-info-row").forEach(btn => {
+        btn.addEventListener("click", async () => {
+            const name = btn.dataset.name;
+            modalTitle.textContent = seedLabel(name);
+            modalTitle.title = humaniseSeed(name);
+            modalBody.innerHTML = `<p class="muted">Loading Karnataka info for <b>${seedLabel(name)}</b>...</p>`;
+            modal.style.display = "flex";
+            try {
+                const r = await fetch(`/api/seed_info/${encodeURIComponent(name)}`);
+                const d = await r.json();
+                if (d.error) {
+                    modalBody.innerHTML = `
+                        <p>No Karnataka entry found in the local DB.</p>
+                        <p class="muted">A web-fallback search would be triggered for this seed.</p>
+                    `;
+                } else {
+                    modalBody.innerHTML = `
+                        <div class="kv"><span class="k">Avg. Price (â‚¹/kg)</span><span class="v">${d.price_inr_per_kg || "â€”"}</span></div>
+                        <div class="kv"><span class="k">Best Soil</span><span class="v">${d.soil || "â€”"}</span></div>
+                        <div class="kv"><span class="k">Best Season</span><span class="v">${d.season || "â€”"}</span></div>
+                        <div class="kv"><span class="k">Major Mandis</span><span class="v">${(d.mandis || []).join(", ") || "â€”"}</span></div>
+                        <div class="kv kv-block"><span class="k">Notes</span><span class="v">${d.notes || "â€”"}</span></div>
+                    `;
+                }
+            } catch (e) {
+                modalBody.innerHTML = `<p class="muted">Could not fetch info.</p>`;
+            }
+        });
+    });
+
+})();
+</script>
+
+</body>
+</html>
+
+

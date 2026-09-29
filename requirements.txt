@@ -1,0 +1,8 @@
+flask
+numpy
+pillow
+tensorflow-directml
+ultralytics
+requests
+beautifulsoup4
+werkzeug

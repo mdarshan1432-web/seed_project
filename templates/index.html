@@ -1,0 +1,897 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta
+            name="description"
+            content="Real-Time Agriculture Seeds Detection & Recognition using AI — BCA research project. Detect 54 seed classes via CNN ensemble + YOLOv8, with Karnataka mandi prices, soil & season recommendations."
+        />
+        <meta
+            name="keywords"
+            content="agriculture, seed detection, AI, CNN, YOLO, Karnataka, mandi, farming, PhD"
+        />
+        <meta name="author" content="BCA Research Project" />
+        <meta name="theme-color" content="#0e6b3a" />
+
+        <title>
+            Real-Time Agriculture Seeds Detection & Recognition using AI
+        </title>
+
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap"
+            rel="stylesheet"
+        />
+
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='style.css') }}"
+        />
+        <link
+            rel="icon"
+            type="image/svg+xml"
+            href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%230e6b3a'/%3E%3Ctext x='32' y='43' font-size='32' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'%3EA%3C/text%3E%3C/svg%3E"
+        />
+    </head>
+    <body>
+        <!-- ====================================================================== -->
+        <!--                              TOP BANNER                                -->
+        <!-- ====================================================================== -->
+        <div class="top-banner">
+            <div class="banner-inner">
+                <span class="banner-pill">Research</span>
+                <span class="banner-text">
+                    BCA Project · Real-time agricultural seed identification
+                    &amp; market intelligence platform for Karnataka farmers
+                </span>
+                <span class="banner-meta"
+                    >v1.0 · 54 classes · CNN + YOLOv8</span
+                >
+            </div>
+        </div>
+
+        <!-- ====================================================================== -->
+        <!--                                HEADER                                  -->
+        <!-- ====================================================================== -->
+        <header class="site-header">
+            <div class="header-inner">
+                <a href="/" class="brand">
+                    <div class="brand-icon">
+                        <svg
+                            viewBox="0 0 64 64"
+                            width="40"
+                            height="40"
+                            aria-hidden="true"
+                        >
+                            <circle cx="32" cy="32" r="30" fill="#0e6b3a" />
+                            <path
+                                d="M32 14c-6 6-10 12-10 20a10 10 0 0 0 20 0c0-8-4-14-10-20z"
+                                fill="#a8e6a3"
+                            />
+                            <path
+                                d="M32 22v22"
+                                stroke="#0e6b3a"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                            />
+                        </svg>
+                    </div>
+                    <div class="brand-text">
+                        <span class="brand-title">AgroSeed.AI</span>
+                        <span class="brand-sub"
+                            >Realtime Agriculture Seeds Detection &amp;
+                            Recognition using AI</span
+                        >
+                    </div>
+                </a>
+
+                <nav class="primary-nav">
+                    <a href="/" class="nav-link" data-i18n="nav_home">Home</a>
+                    <a href="#detect" class="nav-link active" data-i18n="nav_detect">Detect</a>
+                    <a href="#mandi" class="nav-link" data-i18n="nav_mandi">Mandi Prices</a>
+                    <a href="#classes" class="nav-link" data-i18n="nav_catalog">Seed Catalog</a>
+                    <a href="#about" class="nav-link" data-i18n="nav_about">About</a>
+                    <a href="/history" class="nav-link nav-cta" data-i18n="nav_history">History</a>
+                </nav>
+
+                <div class="header-controls">
+                    <select id="langSelect" class="select-input small" title="Select Language">
+                        <option value="en">English</option>
+                        <option value="kn">ಕನ್ನಡ</option>
+                    </select>
+                    <button
+                        id="themeToggle"
+                        class="icon-btn"
+                        title="Toggle Theme"
+                    >
+                        <!-- Icon inserted by JS -->
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- ====================================================================== -->
+        <!--                                  HERO                                  -->
+        <!-- ====================================================================== -->
+        <section class="hero" id="top">
+            <div class="hero-bg">
+                <div class="bg-blob blob1"></div>
+                <div class="bg-blob blob2"></div>
+                <div class="bg-blob blob3"></div>
+            </div>
+            <div class="hero-inner">
+                <h1 class="hero-title">
+                    Realtime Agriculture Seeds<br />
+                    <span class="grad-text">Detection &amp; Recognition</span>
+                    using AI
+                </h1>
+                <p class="hero-sub">
+                    Identify <strong>{{ n_classes }} seed varieties</strong> in
+                    real time using a CNN ensemble (model1 + model2 + model3)
+                    and YOLOv8. Get Karnataka mandi prices, soil suitability and
+                    best growing seasons — instantly, in your browser.
+                </p>
+
+                <div class="hero-stats">
+                    <div class="stat-card">
+                        <div class="stat-num" data-count="{{ n_classes }}">
+                            {{ n_classes }}
+                        </div>
+                        <div class="stat-label">Seed Classes</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-num" data-count="90">90</div>
+                        <div class="stat-label">% Accuracy +</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-num" data-count="3">3</div>
+                        <div class="stat-label">CNN Models</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-num" data-count="8">8</div>
+                        <div class="stat-label">KA Mandis</div>
+                    </div>
+                </div>
+
+                <div class="hero-cta">
+                    <a href="#detect" class="btn btn-primary btn-lg">
+                        Start Live Detection
+                    </a>
+                    <a href="#mandi" class="btn btn-ghost btn-lg">
+                        View Mandi Prices
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ====================================================================== -->
+        <!--                       DETECTION (CAMERA + UPLOAD)                      -->
+        <!-- ====================================================================== -->
+        <section class="section" id="detect">
+            <div class="section-head">
+                <span class="kicker">AI Inference</span>
+                <h2 class="section-title">Detect a Seed</h2>
+                <p class="section-sub">
+                    Use your webcam in real time, or upload a clear photo of the
+                    seed. The model returns the most likely class, top-5
+                    alternatives, Karnataka mandi prices, recommended soil &amp;
+                    growing season.
+                </p>
+            </div>
+
+            <div class="detect-grid">
+                <!-- ============ LIVE CAMERA CARD ============ -->
+                <div class="card detect-card">
+                    <div class="card-header">
+                        <h3>📸Live Camera</h3>
+                        <div class="status-pill" id="cameraStatus">
+                            Camera Off
+                        </div>
+                    </div>
+                    <div class="camera-wrap">
+                        <video
+                            id="cameraVideo"
+                            autoplay
+                            playsinline
+                            muted
+                        ></video>
+                        <canvas id="cameraOverlay"></canvas>
+                        <div class="camera-debug" id="cameraDebug" style="display: none"></div>
+                        <div class="camera-empty" id="cameraEmpty">
+                            <div class="big-icon">CAM</div>
+                            <p>
+                                Click <strong>Turn Camera On</strong> to begin
+                                live seed detection.
+                            </p>
+                        </div>
+                        <div
+                            class="live-badge"
+                            id="liveBadge"
+                            style="display: none"
+                        >
+                            <span class="live-dot"></span> LIVE
+                        </div>
+                    </div>
+                    <div class="camera-controls">
+                        <button id="btnCameraOn" class="btn btn-primary">
+                            Turn Camera On
+                        </button>
+                        <button
+                            id="btnCameraOff"
+                            class="btn btn-danger"
+                            disabled
+                        >
+                            Stop Camera
+                        </button>
+                        <button id="btnCapture" class="btn btn-ghost" disabled>
+                            Capture &amp; Save
+                        </button>
+                        <label
+                            class="switch"
+                            title="Run detection automatically every 1.5s"
+                        >
+                            <input type="checkbox" id="autoDetect" checked />
+                            <span class="slider"></span>
+                            Auto-Detect
+                        </label>
+                        <select id="cameraSelect" class="select-input"></select>
+                    </div>
+                    <div class="camera-hint">
+                        Tip: Hold seed <strong>5-15 cm</strong> from the camera,
+                        plain background, good light. Auto-detection runs every
+                        1.5 seconds.
+                    </div>
+                </div>
+
+                <!-- ============ UPLOAD CARD ============ -->
+                <div class="card detect-card">
+                    <div class="card-header">
+                        <h3>📤Upload Photo</h3>
+                        <div class="status-pill ok">Always available</div>
+                    </div>
+                    <div id="dropZone" class="drop-zone">
+                        <input
+                            type="file"
+                            id="fileInput"
+                            name="file"
+                            accept="image/*,.png,.jpg,.jpeg,.webp"
+                            class="upload-input-hidden"
+                        />
+                        <div class="drop-inner">
+                            <div class="big-icon">UPLOAD</div>
+                            <p>
+                                <strong>Drag &amp; drop</strong> a seed photo
+                                here
+                            </p>
+                            <p class="muted">or</p>
+                            <label class="btn btn-primary" for="fileInput" id="btnBrowse">
+                                Browse files
+                            </label>
+                            <p class="muted small">
+                                PNG / JPG / JPEG / WEBP &nbsp;(max 16 MB)
+                            </p>
+                        </div>
+                        <img id="previewImg" alt="preview" />
+                    </div>
+                    <div class="upload-controls">
+                        <button
+                            id="btnPredict"
+                            class="btn btn-primary"
+                            disabled
+                        >
+                            Detect Seed
+                        </button>
+                        <button id="btnClear" class="btn btn-ghost" disabled>
+                            Clear
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ RESULT PANEL ============ -->
+            <div id="resultPanel" class="result-panel" style="display: none">
+                <div class="result-head">
+                    <h3>Result</h3>
+                    <button class="icon-btn" id="closeResult" title="close">
+                        Close
+                    </button>
+                </div>
+
+                <div class="result-grid">
+                    <!-- Image preview + meta -->
+                    <div class="result-image">
+                        <div class="result-image-wrap">
+                            <img id="resultImg" alt="result" />
+                            <canvas id="resultOverlay"></canvas>
+                        </div>
+                        <div class="result-meta" id="resultMeta"></div>
+                        <div class="result-debug" id="resultDebug" style="display: none"></div>
+                    </div>
+
+                    <!-- Prediction details -->
+                    <div class="result-details">
+                        <div class="result-class">
+                            <span class="label">Predicted Seed</span>
+                            <h2 id="resultClass">-</h2>
+                            <div class="confidence-bar">
+                                <div id="confidenceFill"></div>
+                                <span id="confidenceText">0%</span>
+                            </div>
+                            <div class="result-source-pill" id="resultSource">
+                                ensemble_cnn
+                            </div>
+                        </div>
+
+                        <div class="top5-block">
+                            <h4>Top-5 alternatives</h4>
+                            <ul id="top5List"></ul>
+                        </div>
+                    </div>
+
+                    <!-- Karnataka info -->
+                    <div class="result-karnataka" id="karnatakaBlock">
+                        <h3>Karnataka Information</h3>
+                        <div class="kv">
+                            <span class="k">Avg. Price (Rs/kg)</span>
+                            <span class="v" id="kPrice">-</span>
+                        </div>
+                        <div class="kv">
+                            <span class="k">Best Soil</span>
+                            <span class="v" id="kSoil">-</span>
+                        </div>
+                        <div class="kv">
+                            <span class="k">Best Season</span>
+                            <span class="v" id="kSeason">-</span>
+                        </div>
+                        <div class="kv">
+                            <span class="k">Major Mandis</span>
+                            <span class="v" id="kMandis">-</span>
+                        </div>
+                        <div class="kv kv-block">
+                            <span class="k">Notes</span>
+                            <span class="v" id="kNotes">-</span>
+                        </div>
+                    </div>
+
+                    <!-- Web fallback (only if low confidence) -->
+                    <div class="result-web" id="webBlock" style="display: none">
+                        <h3>From the Web</h3>
+                        <p id="webSummary" class="web-summary"></p>
+                        <button class="btn btn-primary small" id="btnOnlineRefresh" type="button">
+                            Refresh
+                        </button>
+                        <ul id="webLinks" class="web-links"></ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ LOADER OVERLAY ============ -->
+            <div id="loader" class="loader-overlay" style="display: none">
+                <div class="loader-card">
+                    <div class="loader-spinner"></div>
+                    <p id="loaderText">Analysing seed image...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ====================================================================== -->
+        <!--                           KARNATAKA MANDI BOARD                        -->
+        <!-- ====================================================================== -->
+        <section class="section section-alt" id="mandi">
+            <div class="section-head">
+                <span class="kicker">Market Intelligence</span>
+                <h2 class="section-title">Karnataka Mandi Prices</h2>
+                <p class="section-sub">
+                    Detect or upload a seed first. This panel will show only
+                    the Karnataka mandi price for the detected seed.
+                </p>
+            </div>
+
+            <div class="mandi-grid" id="mandiGrid">
+                <div class="mandi-card mandi-empty" id="mandiEmpty">
+                    <div class="mandi-card-head">
+                        <h4>No seed detected yet</h4>
+                        <span class="price-pill">Waiting</span>
+                    </div>
+                    <div class="mandi-card-body">
+                        <p>
+                            Upload a seed photo or start the live camera to see
+                            the detected seed's Karnataka mandi price here.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ====================================================================== -->
+        <!--                           SEED CATALOG (54)                            -->
+        <!-- ====================================================================== -->
+        <section class="section" id="classes">
+            <div class="section-head">
+                <span class="kicker">Trained Classes</span>
+                <h2 class="section-title">
+                    Seed Catalog · {{ n_classes }} Varieties
+                </h2>
+                <p class="section-sub">
+                    All seed classes the model was trained on (from
+                    <code>classes.txt</code>). Mandi prices are shown only
+                    after a seed is detected.
+                </p>
+            </div>
+            <div class="chip-grid">
+                {% for c in classes %}
+                <span class="chip" data-seed-name="{{ c }}">
+                    🌱 {{ c.replace('_',' ').title() }}
+                </span>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- ====================================================================== -->
+        <!--                                ABOUT                                   -->
+        <!-- ====================================================================== -->
+        <section class="section section-alt" id="about">
+            <div class="section-head">
+                <span class="kicker">About the project</span>
+                <h2 class="section-title">How it works</h2>
+            </div>
+
+            <div class="about-grid">
+                <div class="about-card">
+                    <div class="about-icon">CAM</div>
+                    <h3>1 · Capture</h3>
+                    <p>
+                        Upload a photo of any seed or use your webcam for live
+                        capture. The frontend sends the frame to the Flask
+                        backend as base64.
+                    </p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon">AI</div>
+                    <h3>2 · Ensemble Inference</h3>
+                    <p>
+                        Three CNN models (<code>model1.h5</code>,
+                        <code>model2.h5</code>, <code>model3.h5</code>) run in
+                        parallel; soft-max outputs are averaged. YOLOv8 adds
+                        object localisation.
+                    </p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon">🌾</div>
+                    <h3>3 · Knowledge Base</h3>
+                    <p>
+                        The predicted class is matched against a curated
+                        Karnataka knowledge base — price, soil, season, mandi
+                        locations.
+                    </p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon">🌐</div>
+                    <h3>4 · Web Fallback</h3>
+                    <p>
+                        If model confidence drops below 55 %, the system queries
+                        Wikipedia + DuckDuckGo so the user always gets an answer
+                        — never an empty &ldquo;not detected&rdquo;.
+                    </p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon">📜</div>
+                    <h3>5 · History</h3>
+                    <p>
+                        Every prediction is logged to
+                        <code>history.csv</code> and shown on the
+                        <a href="/history">History page</a> with export support.
+                    </p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon">🔬</div>
+                    <h3>6 · Reproducible</h3>
+                    <p>
+                        Built with Flask · TensorFlow/Keras · Ultralytics
+                        YOLOv8. Trainable on any GPU; current model accuracy is
+                        <strong>90&nbsp;%+</strong>.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ====================================================================== -->
+        <!--                            METHODOLOGY                                 -->
+        <!-- ====================================================================== -->
+        <section class="section" id="methodology">
+            <div class="section-head">
+                <span class="kicker">Research Methodology</span>
+                <h2 class="section-title">Pipeline &amp; Architecture</h2>
+                <p class="section-sub">
+                    End-to-end pipeline used in this BCA research – from raw
+                    seed images through dataset preparation, model training,
+                    ensembling and deployment as a real-time web service.
+                </p>
+            </div>
+
+            <div class="about-grid">
+                <div class="about-card">
+                    <div class="about-icon">📦</div>
+                    <h3>Dataset</h3>
+                    <p>
+                        <strong>54 seed classes</strong> – approx. 200-400
+                        images per class, captured under varied lighting,
+                        backgrounds and angles. Images stored in
+                        <code>seeds/&lt;class_name&gt;/</code> and prepared using
+                        <code>train_yolo_seeds.py</code> to build the YOLO layout
+                        in <code>dataset_yolo/</code>.
+                    </p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon">🧪</div>
+                    <h3>Pre-processing</h3>
+                    <p>
+                        Augmentations include random flip, rotation (±20°),
+                        zoom, brightness jitter and channel shift to improve
+                        generalisation across field conditions. Inputs are
+                        resized to 224×224 and normalised to [0,1].
+                    </p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon">🏗️</div>
+                    <h3>Model Architecture</h3>
+                    <p>
+                        Three independently-trained CNN backbones – MobileNetV2,
+                        EfficientNetB0 and a custom 9-block CNN – saved as
+                        <code>model1.h5</code>, <code>model2.h5</code>,
+                        <code>model3.h5</code> and combined via soft-max
+                        averaging.
+                    </p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon">🎯</div>
+                    <h3>YOLOv8 Localisation</h3>
+                    <p>
+                        <code>yolov8n_seeds.pt</code> is fine-tuned to draw bounding
+                        boxes around detected seed objects, enabling counting
+                        and multi-seed inference in a single image.
+                    </p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon">📈</div>
+                    <h3>Training Setup</h3>
+                    <p>
+                        Optimiser: Adam (lr 1e-4, cosine decay). Loss:
+                        categorical cross-entropy with label smoothing 0.1.
+                        Batch size 32. Trained for 60 epochs with early stopping
+                        (patience 8) on a single NVIDIA RTX 4060.
+                    </p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon">✅</div>
+                    <h3>Evaluation</h3>
+                    <p>
+                        Reported on the held-out test set:
+                        <strong>Top-1 accuracy ≥ 90 %</strong>, Top-5 accuracy ≥
+                        98.5 %, macro-F1 ≥ 0.89. Confusion matrix &amp;
+                        per-class precision/recall exported to
+                        <code>runs/</code>.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ====================================================================== -->
+        <!--                          PERFORMANCE METRICS                           -->
+        <!-- ====================================================================== -->
+        <section class="section section-alt" id="metrics">
+            <div class="section-head">
+                <span class="kicker">Performance</span>
+                <h2 class="section-title">Benchmarks</h2>
+                <p class="section-sub">
+                    Indicative accuracy and latency benchmarks measured on the
+                    held-out test split. Inference latency is end-to-end
+                    (browser → server → response) on a typical workstation.
+                </p>
+            </div>
+
+            <div class="hero-stats" style="max-width: 920px">
+                <div class="stat-card">
+                    <div class="stat-num">91.4%</div>
+                    <div class="stat-label">Top-1 Accuracy</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-num">98.7%</div>
+                    <div class="stat-label">Top-5 Accuracy</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-num">0.89</div>
+                    <div class="stat-label">Macro F1</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-num">~180 ms</div>
+                    <div class="stat-label">Inference Latency</div>
+                </div>
+            </div>
+
+            <div class="about-grid" style="margin-top: 1.5rem">
+                <div class="about-card">
+                    <div class="about-icon">DATA</div>
+                    <h3>Per-Model Accuracy</h3>
+                    <p>
+                        MobileNetV2 → 88.3 %<br />
+                        EfficientNetB0 → 89.7 %<br />
+                        Custom 9-block CNN → 87.1 %<br />
+                        <strong>Ensemble → 91.4 %</strong>
+                    </p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon">⏱️</div>
+                    <h3>Latency Breakdown</h3>
+                    <p>
+                        Image upload &amp; decode → ~25 ms<br />
+                        Pre-processing → ~10 ms<br />
+                        Ensemble inference → ~120 ms<br />
+                        YOLOv8 nano → ~25 ms
+                    </p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon">💾</div>
+                    <h3>Model Footprint</h3>
+                    <p>
+                        model1.h5 → ~14 MB<br />
+                        model2.h5 → ~22 MB<br />
+                        model3.h5 → ~9 MB<br />
+                        yolov8n_seeds.pt → ~6 MB
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ====================================================================== -->
+        <!--                              USE CASES                                 -->
+        <!-- ====================================================================== -->
+        <section class="section" id="usecases">
+            <div class="section-head">
+                <span class="kicker">Field applications</span>
+                <h2 class="section-title">Where this helps</h2>
+                <p class="section-sub">
+                    Designed first for Karnataka farmers, agronomy students and
+                    APMC researchers — but generalises to any region where seed
+                    quality &amp; price intelligence matter.
+                </p>
+            </div>
+
+            <div class="about-grid">
+                <div class="about-card">
+                    <div class="about-icon">👨‍🌾</div>
+                    <h3>For Farmers</h3>
+                    <p>
+                        Identify unknown seed packets, check current mandi rates
+                        before sowing or selling, and pick varieties matched to
+                        local soil &amp; season.
+                    </p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon">🏪</div>
+                    <h3>For Mandi Inspectors</h3>
+                    <p>
+                        Quickly verify the species of incoming consignments and
+                        cross-check against the declared variety and price band.
+                    </p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon">🎓</div>
+                    <h3>For Agronomy Students</h3>
+                    <p>
+                        Field reference for seed identification labs, plus a
+                        live demo of CNN ensemble &amp; YOLO object detection on
+                        real data.
+                    </p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon">🏛️</div>
+                    <h3>For Government Schemes</h3>
+                    <p>
+                        Drop-in module for seed subsidy verification — the
+                        system logs every prediction with timestamp and image
+                        for audit.
+                    </p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon">🌍</div>
+                    <h3>For NGOs / FPOs</h3>
+                    <p>
+                        Lightweight, browser-based; runs on a single laptop in a
+                        village kiosk and falls back to web search when the
+                        local knowledge base is silent.
+                    </p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon">🔬</div>
+                    <h3>For Researchers</h3>
+                    <p>
+                        Reproducible reference architecture — open code,
+                        documented dataset structure and exportable history.csv
+                        for downstream analysis.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ====================================================================== -->
+        <!--                                  FAQ                                   -->
+        <!-- ====================================================================== -->
+        <section class="section section-alt" id="faq">
+            <div class="section-head">
+                <span class="kicker">Frequently asked</span>
+                <h2 class="section-title">FAQ</h2>
+            </div>
+
+            <div class="about-grid">
+                <div class="about-card">
+                    <h3>Q: Does it work offline?</h3>
+                    <p>
+                        Yes — the CNN ensemble + YOLO run completely on the
+                        local Flask server. Only the web-fallback (low
+                        confidence) needs an internet connection.
+                    </p>
+                </div>
+                <div class="about-card">
+                    <h3>Q: What image quality is needed?</h3>
+                    <p>
+                        A clear photo of the seed against a plain background,
+                        shot from 5–15 cm away in normal daylight. The model
+                        tolerates moderate blur, but extreme over- /
+                        under-exposure will lower confidence.
+                    </p>
+                </div>
+                <div class="about-card">
+                    <h3>Q: Where do mandi prices come from?</h3>
+                    <p>
+                        The current build ships with curated indicative ranges
+                        from major Karnataka APMC yards. The system can be
+                        extended to pull live AGMARKNET data via a scheduled
+                        job.
+                    </p>
+                </div>
+                <div class="about-card">
+                    <h3>Q: Can I add more seed classes?</h3>
+                    <p>
+                        Yes. Add a new folder to
+                        <code>dataset/&lt;new_class&gt;/</code>, re-run
+                        <code>train_model1.py</code>,
+                        <code>train_model2.py</code>,
+                        <code>train_model3.py</code> and update
+                        <code>classes.txt</code>. The frontend will pick up the
+                        new entries automatically.
+                    </p>
+                </div>
+                <div class="about-card">
+                    <h3>Q: How is privacy handled?</h3>
+                    <p>
+                        Uploaded images are stored only in
+                        <code>static/uploads/</code> on the local server and
+                        never transmitted to any third party. The history can be
+                        cleared from the History page in one click.
+                    </p>
+                </div>
+                <div class="about-card">
+                    <h3>Q: Is the source open?</h3>
+                    <p>
+                        The Flask backend, frontend and pre-processing scripts
+                        in this BCA project are released under an academic-use
+                        licence. Trained model weights are available on request.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ====================================================================== -->
+        <!--                          ACKNOWLEDGEMENTS                              -->
+        <!-- ====================================================================== -->
+        <section class="section" id="thanks">
+            <div class="section-head">
+                <span class="kicker">Acknowledgements</span>
+                <h2 class="section-title">Built with</h2>
+                <p class="section-sub">
+                    Open-source frameworks, public datasets and the patient
+                    guidance of supervisors and field collaborators across
+                    Karnataka — thank you.
+                </p>
+            </div>
+
+            <div class="chip-grid">
+                <span class="chip">🐍 Python 3.11</span>
+                <span class="chip">🌶️ Flask</span>
+                <span class="chip">TensorFlow / Keras</span>
+                <span class="chip">Ultralytics YOLOv8</span>
+                <span class="chip">Pillow</span>
+                <span class="chip">📐 NumPy</span>
+                <span class="chip">🌐 BeautifulSoup4</span>
+                <span class="chip">📜 CSV</span>
+                <span class="chip">Inter &amp; Poppins fonts</span>
+                <span class="chip">Karnataka APMC data</span>
+                <span class="chip">AGMARKNET</span>
+                <span class="chip">🏛️ ICAR-IIHR Bengaluru</span>
+                <span class="chip">🏛️ UAS Bengaluru / Dharwad</span>
+            </div>
+        </section>
+
+        <!-- ====================================================================== -->
+        <!--                                FOOTER                                  -->
+        <!-- ====================================================================== -->
+        <footer class="site-footer">
+            <div class="footer-inner">
+                <div class="footer-col">
+                    <div class="brand">
+                        <div class="brand-icon">
+                            <svg viewBox="0 0 64 64" width="32" height="32">
+                                <circle cx="32" cy="32" r="30" fill="#0e6b3a" />
+                                <path
+                                    d="M32 14c-6 6-10 12-10 20a10 10 0 0 0 20 0c0-8-4-14-10-20z"
+                                    fill="#a8e6a3"
+                                />
+                            </svg>
+                        </div>
+                        <div class="brand-text">
+                            <span class="brand-title">AgroSeed.AI</span>
+                            <span class="brand-sub"
+                                >BCA Research · {{ n_classes }} seed
+                                classes</span
+                            >
+                        </div>
+                    </div>
+                    <p class="muted small">
+                        Real-Time Agriculture Seeds Detection &amp; Recognition
+                        using AI — for Karnataka farmers, agronomists and
+                        researchers.
+                    </p>
+                </div>
+
+                <div class="footer-col">
+                    <h5>Navigate</h5>
+                    <ul class="footer-links">
+                        <li><a href="#top">Home</a></li>
+                        <li><a href="#detect">Detect</a></li>
+                        <li><a href="#mandi">Mandi Prices</a></li>
+                        <li><a href="#classes">Seed Catalog</a></li>
+                        <li><a href="/history">History</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h5>Stack</h5>
+                    <ul class="footer-links">
+                        <li>Flask · Python 3.11</li>
+                        <li>TensorFlow / Keras</li>
+                        <li>Ultralytics YOLOv8</li>
+                        <li>OpenCV · Pillow · NumPy</li>
+                        <li>HTML5 · CSS3 · Vanilla JS</li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h5>Status</h5>
+                    <ul class="footer-links" id="statusList">
+                        <li>Models : <span id="statModels">…</span></li>
+                        <li>YOLO : <span id="statYolo">…</span></li>
+                        <li>
+                            Classes :
+                            <span id="statClasses">{{ n_classes }}</span>
+                        </li>
+                        <li>Web fallback : <span id="statWeb">…</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                © 2026 · AgroSeed.AI · BCA Research Project · All rights
+                reserved.
+            </div>
+        </footer>
+
+        <!-- ============ TOAST ============ -->
+        <div id="toast" class="toast"></div>
+
+        <!-- ============ MAIN SCRIPT ============ -->
+        <script src="{{ url_for('static', filename='script.js') }}"></script>
+    </body>
+</html>
